@@ -18,9 +18,9 @@ services:
     container_name: user-auth
     environment:
       SPRING_APPLICATION_NAME: "springSecurity-with-jwt"
-      SPRING_DATASOURCE_URL: "jdbc:sqlserver://db:1433;databaseName=springSecurity-with-jwt;trustServerCertificate=true;"
-      SPRING_DATASOURCE_USERNAME: "lramos"
-      SPRING_DATASOURCE_PASSWORD: "123"
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://db:1433;databaseName=master;trustServerCertificate=true;"
+      SPRING_DATASOURCE_USERNAME: "sa"
+      SPRING_DATASOURCE_PASSWORD: "senhaforte123!"
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
       SPRING_JPA_HIBERNATE_DIALECT: "org.hibernate.dialect.SQLServerDialect"
       SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
