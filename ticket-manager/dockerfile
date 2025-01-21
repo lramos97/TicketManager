@@ -1,0 +1,23 @@
+# Usa a imagem oficial do Maven com Java 17
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
+
+# Define o diretório de trabalho dentro do contêiner
+WORKDIR /app
+
+# Copia o projeto para o contêiner
+COPY . .
+
+# Compila o projeto sem rodar os testes
+RUN mvn package -DskipTests
+
+# Usa uma imagem leve do Java 17 apenas para rodar o JAR
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+COPY --from=builder /app/target/ticket-manager-0.0.1-SNAPSHOT.jar app.jar
+
+# Expõe a porta da aplicação
+EXPOSE 8080
+
+# Comando para iniciar a aplicação
+CMD ["java", "-jar", "app.jar"]

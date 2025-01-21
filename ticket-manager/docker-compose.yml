@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "123"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    networks:
+      - app-network
+
+  user-auth:
+    build: ./user-auth
+    container_name: user-auth
+    environment:
+      SPRING_APPLICATION_NAME: "springSecurity-with-jwt"
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://db:1433;databaseName=springSecurity-with-jwt;trustServerCertificate=true;"
+      SPRING_DATASOURCE_USERNAME: "lramos"
+      SPRING_DATASOURCE_PASSWORD: "123"
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+      SPRING_JPA_HIBERNATE_DIALECT: "org.hibernate.dialect.SQLServerDialect"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+      API_SECURITY_TOKEN_SECRET: "thisKeyIsSecret"
+      API_SECURITY_TOKEN_ISSUER: "myAppIssuer"
+      API_SECURITY_TOKEN_EXPIRATION_HOURS: "2"
+      TICKET_MANAGER_URL: "http://ticket-manager:8081"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - ticket-manager
+    networks:
+      - app-network
+
+  ticket-manager:
+    build: ./ticket-manager
+    container_name: ticket-manager
+    environment:
+      SPRING_APPLICATION_NAME: "ticket-manager"
+      SPRING_DATASOURCE_URL: "jdbc:h2:mem:testdb"
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.h2.Driver"
+      SPRING_DATASOURCE_USERNAME: "sa"
+      SPRING_DATASOURCE_PASSWORD: ""
+      SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.H2Dialect"
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
